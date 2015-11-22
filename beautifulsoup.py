@@ -14,15 +14,24 @@ try:
     soup = BeautifulSoup(r)
     try:
       link = soup.find_all("div", class_="bibRecordLink")
-      directlink = link[0]
-      #todo: figure out a way to parse out the URLs so they are clickable
+      directlink = str(link[0])
+      directlink = "http://suncat.csun.edu" + directlink[36:]
     except IndexError, e:
       directlink = "nolink"
     try:
+      link = soup.find_all("td", class_="bibInfoData")
+      pubinfo = str(link[2])
+      pubinfo = pubinfo[24:-7]
+    except IndexError, e:
+      pubinfo = "nopub"
+    try:
       briefcit = soup.find_all("span", class_="briefcitTitle")
-      bestmatch = briefcit[0]
+      bestmatch = str(briefcit[0])
+      sep = "&"
+      bestmatch = bestmatch.split(sep, 1)[0]
+      bestmatch = "http://suncat.csun.edu/" + bestmatch[39:]
     except IndexError, e:
       bestmatch = "nomatch"
-    csv_out.writerow([directlink,bestmatch])
+    csv_out.writerow([pubinfo,directlink,bestmatch])
 finally:  
   f.close()
